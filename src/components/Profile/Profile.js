@@ -3,7 +3,7 @@ import { useHistory } from 'react-router';
 import { Context, useGlobalContext } from '../../context/LoginContext'
 
 const Profile = () => {
-    const {users, isLogIn, setIsLogIn} = useGlobalContext(Context);
+    const {users, setIsLogIn,setSessionUser} = useGlobalContext(Context);
     const [userName, setUserName] = useState("");
     const [email, setEmail] = useState("");
     const [loginError, setLoginError] = useState(false);
@@ -17,8 +17,7 @@ const Profile = () => {
         if(currentLoginUser){
             setIsLogIn(true)
             sessionStorage.setItem("currentUser", JSON.stringify(currentLoginUser))
-            // sessionStorage.setItem("isLogIn", JSON.stringify(isLogIn))
-            alert(`user login successfully done!`)
+            setSessionUser(JSON.parse(sessionStorage.getItem("currentUser")))
             history.push(`/user/${currentLoginUser.id}`)
         }
         else{
@@ -26,9 +25,6 @@ const Profile = () => {
             alert(`incorrect login information try Again`)
         }
     }
-    useEffect(()=>{
-        sessionStorage.setItem("isLogIn", JSON.stringify(isLogIn))
-    })
     return (
         <div>
             <form className="row g-3">

@@ -1,27 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { Context, useGlobalContext } from '../../context/LoginContext';
+import SingleProfile from './SingleProfile';
 
 const ProfileDetails = () => {
-    const { isLogIn, sessionUser } = useGlobalContext(Context);
+    const { users } = useGlobalContext(Context);
     const {id} = useParams();
     const [user, setUser] = useState({})
-    const getUser = () =>{
-        const existingUser = sessionStorage.getItem('currentUser')
-        setUser(JSON.parse(existingUser));
+    const getUser = async() =>{
+        let existingUser = await users.find( (user) => user.id === parseInt(id))
+        setUser(existingUser);
     }
     console.log(user);
     useEffect(()=>{
         getUser()
-    },[])
-    console.log("user",user);
+    },[id, users])
     return (
         <div>
-           <h1>{id}</h1>
-           <p>{user.name}</p>
-           <p>{user.username}</p>
-           <p>{user.email}</p>
-           <p>{user.website}</p>
+            <SingleProfile user={user} />
         </div>
     )
 }
