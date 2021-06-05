@@ -1,67 +1,134 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
+import { Context, useGlobalContext } from '../../context/LoginContext'
+import PagePerItems from './PagePerItems';
+import Pagination from './Pagination';
+import Search from './Search';
+import UserTableHead from './UserTableHead';
 
 const Users = () => {
-    const [isLoading, setIsLoading] = useState(false);
-    const [isError, setIsError] = useState(false);
-    const [users, setUsers] = useState([]);
+    const {users,
+        setSorting,
+        currentPage,
+        setCurrentPage,
+        sorting,
+        search,
+        itemPerPage,
+        setItemPerPage,
+        setSearch,
+        } = useGlobalContext(Context);
+    const [totalItems, setTotalItems] = useState(0);
 
-    useEffect(()=>{
-        const getUser =()=>{
-            setIsLoading(true);
-            const url = 'https://jsonplaceholder.typicode.com/users'
-            fetch(url)
-            .then( res => res.json())
-            .then(data => {
-                setUsers(data);
-                console.log(data);
-                setIsLoading(false);
-            })
-            .catch((err)=>{
-                setIsError(err.message);
-            })
+    const headers = [
+        { name: "No#", field: "id", sortable: false },
+        { name: "Name", field: "name", sortable: true },
+        { name: "Email", field: "email", sortable: true },
+        { name: "Website", field: "website", sortable: false },
+    ];
+    useEffect(() => {
+        setCurrentPage(
+            localStorage.getItem("currentPage")
+                ? parseInt(localStorage.getItem("currentPage"))
+                : 1
+        );
+    }, []);
+    const commentsData = useMemo(() => {
+        let computedUsers = users;
+        setTotalItems(users.length);
+
+        if (sorting.field) {
+            const reversed = sorting.order === "asc" ? 1 : -1;
+            let sortedData = [];
+            sortedData = computedUsers.sort((a, b) =>
+                typeof a[sorting.field] === "string"
+                    ? reversed *
+                      a[sorting.field].localeCompare(b[sorting.field])
+                    : reversed * (a[sorting.field] - b[sorting.field])
+            );
+            localStorage.setItem("sortedItem", JSON.stringify(sortedData));
+            console.log("sorting");
         }
-        getUser()
-    },[])
-    const tableHeader =()=>{
-        return Object.keys(users[0]).map(attr => <th key ={attr}>{attr.toUpperCase()}</th>)
-    }
-    const tableRows =()=>{
-        return users.map(user =>{
-            return (
-                <tr key={user.id}>
-                    <td>{user.id}</td>
-                    <td>{user.name}</td>
-                    <td>{user.username}</td>
-                    <td>{user.email}</td>
-                    <td>{`${user.address.street}, ${user.address.city}`}</td>
-                    <td>{user.phone}</td>
-                    <td>{user.website}</td>
-                    <td>{user.company.name}</td>
-                </tr>
-            )
-        }) 
-    }
+
+        if (localStorage.getItem("sortedItem"))
+            computedUsers = JSON.parse(localStorage.getItem("sortedItem"));
+
+        if (search) {
+            computedUsers = computedUsers.filter(
+                (user) =>
+                    user.name.toLowerCase().includes(search.toLowerCase()) ||
+                    user.email
+                        .toLowerCase()
+                        .includes(search.toLowerCase()) ||
+                    user.website.toLowerCase().includes(search.toLowerCase())
+            );
+            setTotalItems(computedUsers.length);
+        }
+        return computedUsers.slice(
+            (currentPage - 1) * itemPerPage,
+            (currentPage - 1) * itemPerPage + itemPerPage
+        );
+    }, [users, currentPage, itemPerPage, search, sorting]);
+    
     return (
         <div>
-            <h1>Users Table</h1>
-            {
-                users.length> 0 ? (
+            <div className=" container py-3">
+                <div className="row">
+                    <div className="col-md-6">
+                        <Pagination
+                            total={totalItems}
+                            itemsPerPage={itemPerPage}
+                            currentPage={currentPage}
+                            onPageChange={(page) => {
+                                localStorage.setItem("currentPage", page);
+                                setCurrentPage(page);
+                            }}
+                        />
+                    </div>
+                    <div className="col-md-2">
+                        <PagePerItems
+                            onItemChange={(value) => {
+                                setItemPerPage(parseInt(value));
+                                setCurrentPage(1)
+                                localStorage.setItem('currentPage', "1")
+                            }}
+                            totalItems = {totalItems}
+                        />
+                    </div>
+                    <div className="d-flex col-md-4 flex-row-reverse">
+                        <Search
+                            onSearch={(value) => {
+                                setSearch(value);
+                                setCurrentPage(1);
+                            }}
+                        />
+                    </div>
+                </div>
+                <div className="row">
                     <table>
-                        <thead>
-                            <tr>
-                                {tableHeader()}
-                            </tr>
-                        </thead>
+                        <UserTableHead
+                            headers={headers}
+                            onSorting={(field, order) =>
+                                setSorting({ field, order })
+                            }
+                        />
                         <tbody>
-                            {tableRows()}
+                            {commentsData.map((comment, index) => {
+                                return (
+                                    <tr key={index}>
+                                        <th scope="row" className="text-center">
+                                            {comment.id}
+                                        </th>
+                                        <td className="text-center">
+                                            {comment.name}
+                                        </td>
+                                        <td className="text-center">{comment.email}</td>
+                                        <td className="text-center">{comment.website}</td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
-                ):(
-                    <div>
-                        No users.
-                    </div>
-                )
-            }
+                </div>
+            </div>
         </div>
     )
 }
