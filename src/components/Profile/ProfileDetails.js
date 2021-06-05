@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { Context, useGlobalContext } from '../../context/LoginContext';
+import SingleUserComments from '../Comment/SingleUserPosts';
 import SingleProfile from './SingleProfile';
 
 const ProfileDetails = () => {
@@ -16,8 +17,9 @@ const ProfileDetails = () => {
         getUser()
     },[id, users])
     return (
-        <div>
+        <div className="">
             <SingleProfile user={user} />
+            <SingleUserComments id = {id} />
         </div>
     )
 }
