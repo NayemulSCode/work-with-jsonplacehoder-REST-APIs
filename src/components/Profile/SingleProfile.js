@@ -17,17 +17,23 @@ const SingleProfile = ({user}) => {
         border: '1px solid black',
         fontSize: '20px',
         fontWeight: '700',
+        marginRight: '5px'
+    }
+    const stylePorfileBody = {
+        padding: '5px',
+        color: 'gary',
+        backgroundColor: '#f8f9fa'
     }
     return (
         <div className="container">
             <div>
-                <p><span style={styleProfilePic}>{shortName()} </span>{user?.name}</p>
+                <p><span style={styleProfilePic}>{shortName()} </span>{ user?.name}</p>
             </div>
             <hr />
-           <div>
-            <p>User Name: {user?.username}</p>
-            <p>Email: {user?.email}</p>
-            <p>Website: {user?.website}</p>
+           <div style={stylePorfileBody}>
+                <p>User Name: {user?.username}</p>
+                <p>Email: {user?.email}</p>
+                <p>Website: {user?.website}</p>
            </div>
         </div>
     )
