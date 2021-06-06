@@ -15,3 +15,6 @@ using technology:
 extra work:
 1. using regular expression
 2. making login system
+3. firebase hosting
+
+live link: https://explorplaceholder.web.app/
