@@ -26,7 +26,7 @@ const Profile = () => {
         }
     }
     return (
-        <div>
+        <div className="container">
             <form className="row g-3">
             <div className="col-auto">
                     <label htmlFor="Email">User Name</label>

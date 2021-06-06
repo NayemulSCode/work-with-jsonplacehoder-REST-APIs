@@ -12,22 +12,25 @@ import PostDetails from './components/Post/PostDetails';
 import Profile from './components/Profile/Profile';
 import ProfileDetails from './components/Profile/ProfileDetails';
 function App() {
+  const navStyle={
+    listStyle: 'none',
+  }
+  const linkStyle={
+    textDecoration: 'none'
+  }
   return (
     <Router>
-       <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
+       <div className="container">
+        <nav className="my-3">
+          <ul className="d-flex justify-content-start ">
+            <li className="mx-3" style={navStyle}>
+              <Link style={linkStyle} to="/">Home</Link>
             </li>
-            <li>
-              <Link to="/posts">Posts</Link>
+            <li className="mx-3" style={navStyle}>
+              <Link style={linkStyle} to="/posts">Posts</Link>
             </li>
-            <li>
-              <Link to="/users">Users</Link>
-            </li>
-            <li>
-              <Link to="/user/:id">Profile</Link>
+            <li className="mx-3" style={navStyle}>
+              <Link style={linkStyle} to="/users">Users</Link>
             </li>
           </ul>
         </nav>
