@@ -16,13 +16,11 @@ const ContextProvider = ({children}) =>{
         setUsers(data);
     }
     // pagination
-    // current page tracking for Posts
     const [currentPostPage, setCurrentPostPage] = useState(
         localStorage.getItem("currentPostPage")
             ? parseInt(localStorage.getItem("currentPostPage"))
             : 1
     );
-    // current page tracking
     const [currentPage, setCurrentPage] = useState(
         localStorage.getItem("currentPage")
             ? parseInt(localStorage.getItem("currentPage"))
